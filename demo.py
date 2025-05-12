@@ -39,11 +39,11 @@ question_embeddings = embed_questions(df["Input"].tolist())
 
 st.set_page_config(
     page_title="Bulipe chatbot",
-    page_icon="images/I.png",
+    page_icon="images/r.png",
     layout="wide",
 )
 st.title("🤖 Bulipe Tech Services based Chatbot")
-set_custom_style("B.avif")
+set_custom_style("B.jpg")
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = [{
