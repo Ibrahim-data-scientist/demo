@@ -4,3 +4,4 @@ chromadb
 sentence-transformers
 nest_asyncio
 gunicorn
+openpyxl
