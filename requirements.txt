@@ -1,6 +1,6 @@
-streamlit
+flask
+pandas
 chromadb
 sentence-transformers
-pandas
-openpyxl
-protobuf
+nest_asyncio
+gunicorn
