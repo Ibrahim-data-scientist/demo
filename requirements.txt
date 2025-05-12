@@ -1,4 +1,6 @@
-streamlit
-chromadb
-sentence-transformers
-pandas
+streamlit==1.39.0
+pandas==2.2.3 
+chromadb==0.5.5 
+sentence-transformers==3.1.1 
+nest_asyncio==1.6.0
+protobuf==3.20.3
