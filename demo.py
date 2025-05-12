@@ -1,31 +1,24 @@
 import streamlit as st
 import pandas as pd
 from sentence_transformers import SentenceTransformer
-import chromadb
+from sklearn.metrics.pairwise import cosine_similarity
 
-# Load Q&A Data
+# Load data
 @st.cache_data
 def load_data():
     return pd.read_excel("data.xlsx")[["Input", "Response"]].dropna()
 
 df = load_data()
 
-# Embedding model
-embedder = SentenceTransformer("all-MiniLM-L6-v2")
+# Load embedding model
+model = SentenceTransformer("all-MiniLM-L6-v2")
 
-# ChromaDB (in-memory, Streamlit Cloud safe)
-chroma_client = chromadb.Client()
-collection = chroma_client.get_or_create_collection("bulipe_faq")
+# Embed all questions once
+@st.cache_resource
+def embed_questions(questions):
+    return model.encode(questions, convert_to_tensor=True)
 
-# Populate the collection (if empty)
-if len(collection.get()["documents"]) == 0:
-    for idx, row in df.iterrows():
-        collection.add(
-            documents=[row["Response"]],
-            metadatas=[{"source": "faq"}],
-            ids=[str(idx)],
-            embeddings=[embedder.encode(row["Input"]).tolist()]
-        )
+question_embeddings = embed_questions(df["Input"].tolist())
 
 # UI config
 st.set_page_config("Bulipe Tech FAQ Bot", layout="centered")
@@ -38,16 +31,17 @@ if "messages" not in st.session_state:
         "content": "Assalamu Alaikum 🌿! I'm your Bulipe Tech FAQ chatbot. Ask me anything about our digital skills programs."
     }]
 
-# Display messages
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.write(message["content"])
+# Display chat messages
+for msg in st.session_state.messages:
+    with st.chat_message(msg["role"]):
+        st.write(msg["content"])
 
 # Search function
-def get_faq_response(query):
-    query_vec = embedder.encode(query).tolist()
-    result = collection.query(query_embeddings=[query_vec], n_results=1)
-    return result["documents"][0][0] if result["documents"] else "Sorry, I couldn't find an answer for that."
+def get_best_response(query):
+    query_embedding = model.encode([query])
+    scores = cosine_similarity(query_embedding, question_embeddings)[0]
+    best_idx = scores.argmax()
+    return df.iloc[best_idx]["Response"]
 
 # Chat input
 if user_input := st.chat_input("Ask something..."):
@@ -55,7 +49,7 @@ if user_input := st.chat_input("Ask something..."):
     with st.chat_message("user"):
         st.write(user_input)
 
-    response = get_faq_response(user_input)
-    st.session_state.messages.append({"role": "assistant", "content": response})
+    answer = get_best_response(user_input)
+    st.session_state.messages.append({"role": "assistant", "content": answer})
     with st.chat_message("assistant"):
-        st.write(response)
+        st.write(answer)
