@@ -1,7 +1,5 @@
-flask
+streamlit
 pandas
-chromadb
 sentence-transformers
-nest_asyncio
-gunicorn
-openpyxl
+chromadb
+openai
