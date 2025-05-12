@@ -2,7 +2,24 @@ import streamlit as st
 import pandas as pd
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
+import base64
 
+
+def set_custom_style(background_image_path):
+    with open(background_image_path, "rb") as image:
+        encoded = base64.b64encode(image.read()).decode()
+    css = f"""
+    <style>
+    .stApp {{
+        background-image: url("data:image/png;base64,{encoded}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }}
+    </style>
+    """
+    st.markdown(css, unsafe_allow_html=True)
 # Load data
 @st.cache_data
 def load_data():
@@ -20,15 +37,18 @@ def embed_questions(questions):
 
 question_embeddings = embed_questions(df["Input"].tolist())
 
-# UI config
-st.set_page_config("Bulipe Tech FAQ Bot", layout="centered")
-st.title("🤖 Bulipe Tech FAQ Chatbot")
-
+st.set_page_config(
+    page_title="Bulipe chatbot",
+    page_icon="images/I.png",
+    layout="wide",
+)
+st.title("🤖 Bulipe Tech Services based Chatbot")
+set_custom_style("B.avif")
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = [{
         "role": "assistant",
-        "content": "Assalamu Alaikum 🌿! I'm your Bulipe Tech FAQ chatbot. Ask me anything about our digital skills programs."
+        "content": "Assalamu Alaikum 🌿! I'm your Bulipe Tech  chatbot. Ask me anything about our digital skills programs."
     }]
 
 # Display chat messages
