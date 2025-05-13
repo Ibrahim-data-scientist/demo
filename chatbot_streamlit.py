@@ -39,7 +39,7 @@ question_embeddings = embed_questions(df["Input"].tolist())
 
 st.set_page_config(
     page_title="Bulipe chatbot",
-    page_icon="images/r.png",
+    page_icon="r.png",
     layout="wide" 
 )
 st.title("🤖 Bulipe Tech Services based Chatbot")
