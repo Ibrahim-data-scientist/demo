@@ -29,7 +29,7 @@ embedder = SentenceTransformer("all-MiniLM-L6-v2")
 chroma_client = chromadb.PersistentClient(path="./chroma_store")
 collection = chroma_client.get_or_create_collection("faq_bot")
 
-# Store data if not already stored
+# Store data if not already 
 if len(collection.get()["documents"]) == 0:
     for idx, row in df.iterrows():
         collection.add(
