@@ -28,7 +28,7 @@ def load_data():
 df = load_data()
 
 # Load embedding model
-model = SentenceTransformer("all-MiniLM-L6-v2")
+model = SentenceTransformer("all-MiniLM-L6-v2", device="cpu")
 
 # Embed all questions once
 @st.cache_resource
